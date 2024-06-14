@@ -1,13 +1,17 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
-import { AuthDTO, authResponseDTO } from './auth.dto';
+import { AuthDTO, authResponseDTO } from './dto/auth.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
+    public readonly EXPIRE_DAY_REFRESH_TOKEN = 1
+    public readonly REFRESH_TOKEN_NAME = 'refreshToken'
+
     constructor(
         @InjectModel(User.name)
         private userRepository: Model<User>,
@@ -25,8 +29,8 @@ export class AuthService {
             email,
             password: hashedPassword
         })
-        const token = this.jwtService.sign({ id: user._id })
-        return { token, email: user.email }
+        const tokens = this.getTokens(String(user._id))
+        return { ...tokens, email: user.email }
     }
 
     public async signIn(signInDTO: AuthDTO): Promise<authResponseDTO> {
@@ -39,7 +43,42 @@ export class AuthService {
         if (!isPasswordMatched) {
             throw new UnauthorizedException("Invalid email or password")
         }
-        const token = this.jwtService.sign({ id: user._id })
-        return { token, email: user.email }
+        const tokens = this.getTokens(String(user._id))
+        return { ...tokens, email: user.email }
+    }
+
+    public addRefreshTokenToResponse(res: Response, refreshToken: string) {
+        const expiresIn = new Date()
+        expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAY_REFRESH_TOKEN)
+
+        res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
+            httpOnly: true,
+            domain: "localhost",
+            expires: expiresIn,
+            secure: true,
+            sameSite: 'none'
+        })
+    }
+
+    public removeRefreshTokenFromResponse(res: Response) {
+        res.cookie(this.REFRESH_TOKEN_NAME, '', {
+            httpOnly: true,
+            domain: "localhost",
+            expires: new Date(0),
+            secure: true,
+            sameSite: 'none'
+        })
+    }
+
+    public getTokens(userId: string) {
+        const data = { id: userId }
+
+        const accessToken = this.jwtService.sign(data, {
+            expiresIn: '1d'
+        })
+        const refreshToken = this.jwtService.sign(data, {
+            expiresIn: '7d'
+        })
+        return { accessToken, refreshToken }
     }
 }

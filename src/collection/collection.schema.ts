@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import mongoose from "mongoose"
+import mongoose, { Document } from "mongoose"
 import { Product } from "src/product/product.schema"
 
 @Schema({
