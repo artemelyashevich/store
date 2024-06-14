@@ -10,9 +10,9 @@ import { Collection } from '../collection/collection.schema';
 export class ProductService {
     constructor(
         @InjectModel(Product.name)
-        private productRepository: mongoose.Model<Product>,
+        private readonly productRepository: mongoose.Model<Product>,
         @InjectModel(Collection.name)
-        private collectionRepository: mongoose.Model<Collection>
+        private readonly collectionRepository: mongoose.Model<Collection>
     ) { }
 
     public async findAll(query: Query): Promise<Product[]> {

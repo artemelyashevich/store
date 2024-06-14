@@ -12,6 +12,9 @@ export class Review {
 
     @Prop()
     body: string
+
+    @Prop()
+    productId: string
 }
 
 
