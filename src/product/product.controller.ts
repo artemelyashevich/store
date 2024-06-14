@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.schema';
+import {Query as ExpressQuery} from 'express-serve-static-core'
 
 @Controller('product')
 export class ProductController {
@@ -8,7 +9,7 @@ export class ProductController {
   }
 
   @Get()
-  public async getAllProducts(): Promise<Product[]> {
-    return this.productService.findAll()
+  public async getAllProducts(@Query() query: ExpressQuery): Promise<Product[]> {
+    return this.productService.findAll(query)
   }
 }
