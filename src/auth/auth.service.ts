@@ -17,7 +17,7 @@ export class AuthService {
     public async signUp(signUpDTO: AuthDTO): Promise<authResponseDTO> {
         const { email, password } = signUpDTO
         const findUser = await this.userRepository.find({ email })
-        if (findUser) {
+        if (findUser.length > 0) {
             throw new BadRequestException("Such user already exists")
         }
         const hashedPassword = await bcrypt.hash(password, 10)
