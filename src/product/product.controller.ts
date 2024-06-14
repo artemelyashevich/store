@@ -15,17 +15,17 @@ export class ProductController {
     return this.productService.findAll(query)
   }
 
-  @Get('/:name')
-  public async getProductByName(@Param("name") name: string): Promise<Product> {
-    return this.productService.findByName(name)
-  }
-
   @Post()
   @UseGuards(AuthGuard())
   @UsePipes(new ValidationPipe())
   @HttpCode(201)
   public async createProduct(@Body() data: ProductDTO): Promise<Product> {
     return this.productService.create(data)
+  }
+
+  @Get('/:name')
+  public async getProductByName(@Param("name") name: string): Promise<Product> {
+    return this.productService.findByName(name)
   }
 
   @Put('/:id')
@@ -42,5 +42,10 @@ export class ProductController {
   @HttpCode(204)
   public async removeProduct(@Param("id") id: string): Promise<void> {
     return this.productService.delete(id)
+  }
+
+  @Get('/collection/:name')
+  public async getProductsByCollection(@Param("name") name: string): Promise<Product[]> {
+    return this.productService.findByCollection(name)
   }
 }

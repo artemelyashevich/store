@@ -32,6 +32,15 @@ export class ProductService {
         }
     }
 
+    public async findByCollection(collectionName: string): Promise<Product[]> {
+        const collection = await this.collectionRepository.findOne({name: collectionName})
+        if (!collection) {
+            throw new NotFoundException("No such collection")
+        }
+        const products = await this.productRepository.find({collection: collection.name})
+        return products
+    } 
+
     public async findByName(name: string): Promise<Product> {
         const product = await this.productRepository.findOne({ name: name })
         if (!product) {
