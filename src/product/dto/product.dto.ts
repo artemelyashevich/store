@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator"
+import { IsNotEmpty, IsString, IsUrl } from "class-validator"
 
 export class ProductDTO {
     @IsNotEmpty()
@@ -11,7 +11,14 @@ export class ProductDTO {
     @IsNotEmpty()
     readonly price: number
 
+    @IsNotEmpty()
+    @IsUrl()
+    readonly imageUrl: string
+
     readonly discount: number
 
     readonly volume: number
+
+    @IsNotEmpty()
+    readonly collection: string
 }

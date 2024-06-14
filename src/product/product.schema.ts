@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Collection, Document } from "mongoose";
 
 @Schema({
     timestamps: true
 })
-export class Product extends Document {
+export class Product  {
+    [x: string]: any;
     @Prop()
     name: string
 
@@ -23,8 +23,8 @@ export class Product extends Document {
     @Prop()
     volume: number
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Collection' })
-    collectionId: Collection
+    @Prop()
+    collection: string
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product)

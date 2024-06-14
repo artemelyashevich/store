@@ -4,6 +4,7 @@ import { ProductController } from './product.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductSchema } from './product.schema';
 import { AuthModule } from '../auth/auth.module';
+import { CollectionSchema } from 'src/collection/collection.schema';
 
 @Module({
   imports: [
@@ -12,6 +13,10 @@ import { AuthModule } from '../auth/auth.module';
       {
         name: "Product",
         schema: ProductSchema
+      },
+      {
+        name: "Collection",
+        schema: CollectionSchema
       }
     ])
   ],

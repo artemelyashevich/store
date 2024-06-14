@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core'
@@ -16,14 +16,31 @@ export class ProductController {
   }
 
   @Get('/:name')
-  public async getProductByName(@Param() name: string): Promise<Product> {
+  public async getProductByName(@Param("name") name: string): Promise<Product> {
     return this.productService.findByName(name)
   }
 
   @Post()
   @UseGuards(AuthGuard())
   @UsePipes(new ValidationPipe())
+  @HttpCode(201)
   public async createProduct(@Body() data: ProductDTO): Promise<Product> {
     return this.productService.create(data)
+  }
+
+  @Put('/:id')
+  @UseGuards(AuthGuard())
+  @UsePipes(new ValidationPipe())
+  @HttpCode(201)
+  public async updateProduct(@Param("id") id: string, @Body() data: ProductDTO): Promise<Product> {
+    return this.productService.update(id, data)
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard())
+  @UsePipes(new ValidationPipe())
+  @HttpCode(204)
+  public async removeProduct(@Param("id") id: string): Promise<void> {
+    return this.productService.delete(id)
   }
 }

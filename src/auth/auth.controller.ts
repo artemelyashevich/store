@@ -38,6 +38,7 @@ export class AuthController {
   }
 
   @Post("/signIn/access-token")
+  @HttpCode(201)
   public async getNewTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
